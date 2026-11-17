@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mealy ⇄ Moore Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">CSET302 · Automata Theory &amp; Computability · Simulator topic 14</p>
+        <h1>Mealy ⇄ Moore Conversion Simulator</h1>
+        <p class="lede">Define a Mealy or Moore machine, watch it converted step by step, then run strings through
+          both machines to confirm the output behaviour is preserved.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 1. Input -->
+    <section class="card" id="input-card">
+      <div class="card-head">
+        <h2><span class="num">1</span> Define the machine</h2>
+        <label class="inline">Load example
+          <select id="example"><option value="">— choose —</option></select>
+        </label>
+      </div>
+
+      <div class="seg" role="radiogroup" aria-label="Machine type">
+        <button type="button" data-type="mealy" role="radio">Mealy machine <small>output on transitions</small></button>
+        <button type="button" data-type="moore" role="radio">Moore machine <small>output on states</small></button>
+      </div>
+
+      <div class="fields">
+        <label>States Q <input id="f-states" spellcheck="false" placeholder="q0, q1, q2"></label>
+        <label>Input alphabet Σ <input id="f-inputs" spellcheck="false" placeholder="0, 1"></label>
+        <label>Output alphabet Δ <input id="f-outputs" spellcheck="false" placeholder="0, 1"></label>
+        <label>Start state q₀ <select id="f-start"></select></label>
+      </div>
+      <p class="hint">Separate names with commas. Then fill the transition table below
+        (<span id="table-hint"></span>).</p>
+
+      <div class="table-scroll"><table id="editor" class="tt editor"></table></div>
+
+      <p class="formal" id="formal"></p>
+      <div id="errors" class="errors" hidden></div>
+
+      <div class="actions">
+        <label class="check"><input type="checkbox" id="opt-min"> Minimize result (remove unreachable &amp; merge equivalent states)</label>
+        <span class="spacer"></span>
+        <button type="button" id="btn-import">Import JSON</button>
+        <button type="button" id="btn-export">Export JSON</button>
+        <button type="button" id="btn-convert" class="primary">Convert →</button>
+        <input type="file" id="file-import" accept=".json,application/json" hidden>
+      </div>
+    </section>
+
+    <!-- 2. Conversion -->
+    <section class="card" id="convert-card" hidden>
+      <div class="card-head">
+        <h2><span class="num">2</span> Step-by-step conversion <span class="tag" id="direction"></span></h2>
+        <div class="btn-row">
+          <button type="button" id="btn-relayout" title="Re-arrange both diagrams">Reset layout</button>
+          <button type="button" id="btn-use-result" title="Load the result into section 1 (round trip)">Use result as input</button>
+        </div>
+      </div>
+
+      <div class="stepbar">
+        <div class="btn-row">
+          <button type="button" id="st-first" aria-label="First step">⏮</button>
+          <button type="button" id="st-prev" aria-label="Previous step">◀ Prev</button>
+          <button type="button" id="st-play" class="primary" aria-label="Play">▶ Play</button>
+          <button type="button" id="st-next" aria-label="Next step">Next ▶</button>
+          <button type="button" id="st-last" aria-label="Last step">⏭</button>
+        </div>
+        <div class="step-count"><span id="st-phase" class="tag"></span> Step <b id="st-num">1</b> of <b id="st-total">1</b></div>
+      </div>
+      <input type="range" id="st-range" min="0" max="0" value="0" aria-label="Step">
+
+      <div class="diagrams">
+        <figure>
+          <figcaption id="cap-src">Source</figcaption>
+          <svg id="svg-src" class="diagram" role="img" aria-label="Source machine diagram"></svg>
+        </figure>
+        <figure>
+          <figcaption id="cap-res">Result</figcaption>
+          <svg id="svg-res" class="diagram" role="img" aria-label="Result machine diagram"></svg>
+        </figure>
+      </div>
+      <p class="hint center">Drag states to rearrange. Highlighted states/edges are the ones used in the current step.</p>
+
+      <div class="step-detail">
+        <article class="step-text">
+          <h3 id="st-title"></h3>
+          <div id="st-html"></div>
+        </article>
+        <div>
+          <h3 class="sub">Result transition table</h3>
+          <div class="table-scroll" id="res-table"></div>
+        </div>
+      </div>
+
+      <details class="all-steps">
+        <summary>All steps</summary>
+        <ol id="step-list"></ol>
+      </details>
+    </section>
+
+    <!-- 3. Simulation & validation -->
+    <section class="card" id="sim-card" hidden>
+      <div class="card-head">
+        <h2><span class="num">3</span> Simulate &amp; validate</h2>
+      </div>
+
+      <div class="sim-input">
+        <label>Input string w
+          <input id="sim-word" spellcheck="false" placeholder="e.g. 0110 (or: a b b a)">
+        </label>
+        <button type="button" id="btn-run" class="primary">Run both machines</button>
+      </div>
+      <div id="sim-error" class="errors" hidden></div>
+
+      <div id="sim-out" hidden>
+        <div class="sim-scrub">
+          <button type="button" id="sim-prev" aria-label="Previous symbol">◀</button>
+          <input type="range" id="sim-range" min="0" max="0" value="0" aria-label="Symbols read">
+          <button type="button" id="sim-next" aria-label="Next symbol">▶</button>
+          <span id="sim-pos" class="muted"></span>
+        </div>
+        <div class="traces">
+          <div><h3 class="sub" id="tr-a-title"></h3><div class="table-scroll" id="tr-a"></div></div>
+          <div><h3 class="sub" id="tr-b-title"></h3><div class="table-scroll" id="tr-b"></div></div>
+        </div>
+        <div id="sim-verdict" class="verdict"></div>
+      </div>
+
+      <hr>
+
+      <div class="tests">
+        <div>
+          <h3 class="sub">Test cases — expected vs generated</h3>
+          <p class="hint">One input string per line; write <code>ε</code> to test the empty string (blank lines are skipped).
+            <b>Expected</b> is computed from the source machine, <b>generated</b> from the converted one;
+            Moore outputs are compared without their leading λ(q₀).</p>
+          <textarea id="tests" rows="7" spellcheck="false"></textarea>
+          <button type="button" id="btn-tests" class="primary">Run test cases</button>
+        </div>
+        <div class="table-scroll" id="tests-out"></div>
+      </div>
+
+      <hr>
+
+      <div class="exhaustive">
+        <label class="inline" for="ex-len">Check every string up to length
+          <div class="custom-number-stepper">
+            <input type="number" id="ex-len" min="0" max="16" value="8">
+            <div class="stepper-controls">
+              <button type="button" class="stepper-arrow stepper-up" id="ex-len-up" aria-label="Increase length" tabindex="-1">
+                <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor">
+                  <path d="M8 4.5l4.5 5.5H3.5z"/>
+                </svg>
+              </button>
+              <button type="button" class="stepper-arrow stepper-down" id="ex-len-down" aria-label="Decrease length" tabindex="-1">
+                <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor">
+                  <path d="M8 11.5L3.5 6h9z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </label>
+        <button type="button" id="btn-exhaustive">Run exhaustive equivalence check</button>
+        <div id="ex-out" class="verdict"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <span>Mealy ⇄ Moore Conversion Simulator · runs entirely in the browser, no installation needed.</span>
+    <span class="foot-sep">·</span>
+    <a href="docs.html" class="foot-link">Read the Docs (How It Works?) →</a>
+  </footer>
+
+  <script src="js/machine.js"></script>
+  <script src="js/examples.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

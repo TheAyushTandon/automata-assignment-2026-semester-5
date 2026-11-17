@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How It Works? · Mealy ⇄ Moore Conversion Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <!-- Top Navigation Bar -->
+    <nav class="docs-nav-bar" aria-label="Documentation Navigation">
+      <a href="index.html" class="btn-back">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to Simulator
+      </a>
+      <span class="tag">CSET302 · Automata Theory Documentation</span>
+    </nav>
+
+    <!-- Hero Section with White Doodle Art -->
+    <header class="docs-hero">
+      <div class="docs-hero-content">
+        <p class="eyebrow">Interactive Theory &amp; Architecture Manual</p>
+        <h1>How It Works?</h1>
+        <p class="lead-p">
+          A clear, friendly, and complete breakdown of the mathematical models, conversion algorithms,
+          formulas, and visual graph layout engine behind every heading of this project.
+        </p>
+
+        <!-- Quick Jump Navigation -->
+        <div class="docs-quick-nav">
+          <a href="#heading-1" class="docs-quick-link">1. Define the Machine</a>
+          <a href="#heading-2" class="docs-quick-link">2. Step-by-Step Conversion</a>
+          <a href="#heading-2-mealy-moore" class="docs-quick-link">↳ Mealy → Moore</a>
+          <a href="#heading-2-moore-mealy" class="docs-quick-link">↳ Moore → Mealy</a>
+          <a href="#heading-2-min" class="docs-quick-link">↳ Minimization</a>
+          <a href="#heading-3" class="docs-quick-link">3. Simulate &amp; Validate</a>
+          <a href="#engine" class="docs-quick-link">4. Layout &amp; Animation Engine</a>
+        </div>
+      </div>
+
+      <!-- Hero White Doodle Illustration -->
+      <div class="doodle-hero-art" aria-hidden="true">
+        <svg class="white-doodle-svg" viewBox="0 0 320 240" fill="none" stroke="#fffcf2" stroke-width="2.2">
+          <!-- Sketchy start state q0 -->
+          <circle cx="70" cy="120" r="32" stroke="#fffcf2" stroke-dasharray="2 0"/>
+          <text x="70" y="126" font-family="'Ubuntu Mono', monospace" font-size="16" font-weight="700" fill="#fffcf2" text-anchor="middle" stroke="none">q0</text>
+          
+          <!-- Hand-drawn start arrow -->
+          <path d="M 12 120 C 26 118, 32 122, 38 120" stroke-linecap="round"/>
+          <path d="M 32 113 L 38 120 L 31 127" stroke-linecap="round"/>
+          <text x="18" y="106" font-family="'Ubuntu', sans-serif" font-size="11" font-weight="600" fill="#eb5e28" stroke="none">START</text>
+
+          <!-- Sketchy target state q1 -->
+          <circle cx="230" cy="120" r="32" stroke="#fffcf2"/>
+          <text x="230" y="126" font-family="'Ubuntu Mono', monospace" font-size="16" font-weight="700" fill="#fffcf2" text-anchor="middle" stroke="none">q1</text>
+
+          <!-- Curved transition arrow (top) -->
+          <path d="M 98 104 C 135 60, 168 60, 202 104" stroke-linecap="round"/>
+          <path d="M 194 92 L 202 104 L 188 105" stroke-linecap="round"/>
+          <text x="150" y="66" font-family="'Ubuntu Mono', monospace" font-size="14" font-weight="700" fill="#eb5e28" stroke="none">input / output</text>
+
+          <!-- Curved transition arrow (bottom) -->
+          <path d="M 204 136 C 172 178, 132 178, 98 138" stroke-linecap="round"/>
+          <path d="M 106 148 L 98 138 L 112 135" stroke-linecap="round"/>
+
+          <!-- Doodle sparkles / stars -->
+          <path d="M 160 22 L 160 34 M 154 28 L 166 28" stroke-width="1.8"/>
+          <path d="M 285 45 L 285 55 M 280 50 L 290 50" stroke-width="1.8"/>
+          <path d="M 40 185 L 40 195 M 35 190 L 45 190" stroke-width="1.8"/>
+
+          <!-- Wavy sketch underlines -->
+          <path d="M 115 210 Q 150 202, 190 214 T 225 208" stroke="#ccc5b9" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </header>
+
+    <main>
+      <!-- ============================================================== -->
+      <!-- SECTION 1: DEFINE THE MACHINE                                  -->
+      <!-- ============================================================== -->
+      <section class="docs-section" id="heading-1">
+        <article class="docs-card">
+          <div class="docs-card-header">
+            <h2><span class="num">1</span> Define the Machine — Core Automata Concepts</h2>
+            <span class="tag">Section 1 Overview</span>
+          </div>
+
+          <p>
+            Standard Finite Automata (like DFAs and NFAs) are decision makers: they read a string of symbols and give a
+            single binary verdict at the end—either <b>ACCEPT</b> or <b>REJECT</b>.
+          </p>
+          <p>
+            <b>Finite State Machines with Output (Transducers)</b> do something much more useful: instead of just saying yes or no,
+            they generate a sequence of output symbols as they read input symbols. They are the fundamental blueprint behind
+            digital logic circuits, serial communication protocols, lexical analyzers, and hardware controllers.
+          </p>
+
+          <h3>The Formal 6-Tuple Definition</h3>
+          <p>Both Mealy and Moore machines are formally defined by a mathematical 6-tuple:</p>
+
+          <div class="formula-box">
+            <span class="formula-title">Mathematical Definition</span>
+            M = (Q, Σ, Δ, δ, λ, q₀)
+          </div>
+
+          <ul>
+            <li><b>Q (Set of States):</b> A finite set of states representing the machine's internal memory (e.g., <code>{q1, q2, q3, q4}</code>).</li>
+            <li><b>Σ (Input Alphabet):</b> A finite set of symbols the machine can read from the outside world (e.g., <code>{0, 1}</code>).</li>
+            <li><b>Δ (Output Alphabet):</b> A finite set of symbols the machine can produce and transmit (e.g., <code>{0, 1}</code> or <code>{A, B}</code>).</li>
+            <li><b>δ (Transition Function):</b> The roadmap of the machine. It takes the current state and an input symbol, and specifies which state to move to next:
+              <div class="formula-box" style="margin: 8px 0;">δ : Q × Σ → Q</div>
+            </li>
+            <li><b>λ (Output Function):</b> The rule that dictates what output is generated. <i>This is the only structural difference between Mealy and Moore machines!</i></li>
+            <li><b>q₀ (Start State):</b> The designated initial state where computation begins (<code>q₀ ∈ Q</code>).</li>
+          </ul>
+
+          <h3>Mealy vs. Moore: Where Does the Output Live?</h3>
+
+          <div class="comparison-grid">
+            <div class="comparison-col">
+              <h4>Mealy Machine</h4>
+              <p><b>Output lives on the transitions (arrows).</b></p>
+              <div class="formula-box">λ : Q × Σ → Δ</div>
+              <p>
+                The output depends on <b>both</b> the current state and the incoming input symbol.
+                Think of typing on a keyboard: the character printed on screen depends on which state your computer is in
+                <i>and</i> which key you just tapped.
+              </p>
+            </div>
+            <div class="comparison-col">
+              <h4>Moore Machine</h4>
+              <p><b>Output lives inside the states (nodes).</b></p>
+              <div class="formula-box">λ : Q → Δ</div>
+              <p>
+                The output depends <b>strictly</b> on the state you are in, regardless of how you got there.
+                Think of a room with a lightbulb: the color of light in the room depends solely on which room you entered,
+                not which doorway you walked through.
+              </p>
+            </div>
+          </div>
+
+          <!-- White Doodle Art #1: Mealy vs Moore Visual Comparison -->
+          <div class="doodle-card">
+            <svg class="white-doodle-svg" viewBox="0 0 680 160" width="680" height="160" fill="none" stroke="#fffcf2" stroke-width="2.2">
+              <!-- Left side: Mealy Machine sketch -->
+              <g transform="translate(40, 20)">
+                <text x="120" y="16" font-family="'Ubuntu', sans-serif" font-size="14" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">MEALY MACHINE (Output on Arrow)</text>
+                <!-- State A -->
+                <circle cx="40" cy="70" r="26" stroke="#fffcf2"/>
+                <text x="40" y="75" font-family="'Ubuntu Mono', monospace" font-size="14" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q1</text>
+                <!-- State B -->
+                <circle cx="200" cy="70" r="26" stroke="#fffcf2"/>
+                <text x="200" y="75" font-family="'Ubuntu Mono', monospace" font-size="14" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q2</text>
+                <!-- Transition with a/b -->
+                <path d="M 68 70 L 170 70" stroke-linecap="round"/>
+                <path d="M 160 63 L 172 70 L 160 77" stroke-linecap="round"/>
+                <!-- Output tag doodle -->
+                <rect x="94" y="42" width="50" height="22" rx="6" stroke="#ccc5b9" stroke-width="1.6" stroke-dasharray="3 2"/>
+                <text x="119" y="57" font-family="'Ubuntu Mono', monospace" font-size="13" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">a / b</text>
+                <text x="119" y="110" font-family="'Ubuntu', sans-serif" font-size="12" fill="#ccc5b9" stroke="none" text-anchor="middle">input a → outputs b</text>
+              </g>
+
+              <!-- Divider -->
+              <line x1="340" y1="20" x2="340" y2="140" stroke="#403d39" stroke-width="2" stroke-dasharray="6 4"/>
+
+              <!-- Right side: Moore Machine sketch -->
+              <g transform="translate(360, 20)">
+                <text x="140" y="16" font-family="'Ubuntu', sans-serif" font-size="14" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">MOORE MACHINE (Output in State)</text>
+                <!-- State A with divider inside -->
+                <circle cx="50" cy="70" r="28" stroke="#fffcf2"/>
+                <line x1="26" y1="70" x2="74" y2="70" stroke="#ccc5b9" stroke-width="1.5"/>
+                <text x="50" y="62" font-family="'Ubuntu Mono', monospace" font-size="12" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q1</text>
+                <text x="50" y="85" font-family="'Ubuntu Mono', monospace" font-size="12" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">λ=0</text>
+                <!-- State B with divider inside -->
+                <circle cx="210" cy="70" r="28" stroke="#fffcf2"/>
+                <line x1="186" y1="70" x2="234" y2="70" stroke="#ccc5b9" stroke-width="1.5"/>
+                <text x="210" y="62" font-family="'Ubuntu Mono', monospace" font-size="12" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q2</text>
+                <text x="210" y="85" font-family="'Ubuntu Mono', monospace" font-size="12" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">λ=1</text>
+                <!-- Transition with only input 'a' -->
+                <path d="M 80 70 L 178 70" stroke-linecap="round"/>
+                <path d="M 168 63 L 180 70 L 168 77" stroke-linecap="round"/>
+                <text x="130" y="60" font-family="'Ubuntu Mono', monospace" font-size="14" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">a</text>
+                <text x="130" y="110" font-family="'Ubuntu', sans-serif" font-size="12" fill="#ccc5b9" stroke="none" text-anchor="middle">pure input on arrow</text>
+              </g>
+            </svg>
+            <div class="doodle-caption">Fig 1. Hand-drawn doodle comparison: Mealy places outputs on transitions, Moore binds outputs to state memory.</div>
+          </div>
+
+          <h3>Input Table &amp; Robust Validation</h3>
+          <p>
+            When you enter state names and alphabet symbols in Section 1, the simulator immediately dynamically generates a matrix
+            where every combination of <code>(state, input)</code> has an exact cell for next-state and output.
+          </p>
+          <p>
+            Before running any conversions, the validator guarantees mathematical integrity:
+          </p>
+          <ul>
+            <li>Checks that every state has transitions defined for <i>all</i> input alphabet symbols (deterministic and complete).</li>
+            <li>Validates that transition targets belong to the defined set of states <code>Q</code>.</li>
+            <li>Verifies that output values strictly belong to the output alphabet <code>Δ</code>.</li>
+            <li>Guarantees the start state <code>q₀</code> is an existing state.</li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- SECTION 2: STEP-BY-STEP CONVERSION                             -->
+      <!-- ============================================================== -->
+      <section class="docs-section" id="heading-2">
+        <article class="docs-card">
+          <div class="docs-card-header">
+            <h2><span class="num">2</span> Step-by-Step Conversion — Algorithms &amp; Math</h2>
+            <span class="tag">Section 2 Overview</span>
+          </div>
+
+          <p>
+            Can every Mealy machine be converted into an equivalent Moore machine, and vice-versa?
+            <b>Yes!</b> They have identical computational power. However, their internal wiring must be converted systematically.
+          </p>
+
+          <!-- Subsection: Mealy to Moore -->
+          <div id="heading-2-mealy-moore">
+            <h3>2.1 Mealy → Moore Conversion (The State-Splitting Method)</h3>
+            <p>
+              <b>The Problem:</b> In a Mealy machine, state <code>q2</code> might be entered from <code>q1</code> producing output <code>0</code>,
+              and also entered from <code>q3</code> producing output <code>1</code>.
+              Because a Moore machine requires every state to possess a single fixed output, state <code>q2</code> faces a contradiction.
+            </p>
+            <p>
+              <b>The Solution:</b> We duplicate ("split") the state! We create a copy of <code>q2</code> for output <code>0</code> (named <code>q2_0</code>)
+              and another copy for output <code>1</code> (named <code>q2_1</code>).
+            </p>
+
+            <div class="callout-box">
+              <p><b>State Splitting Rule:</b> A Mealy state <code>q</code> is split into as many Moore states as there are unique output symbols on transitions entering <code>q</code>.</p>
+            </div>
+
+            <h4>The 4-Step Algorithmic Pipeline</h4>
+            <ol>
+              <li>
+                <b>Step 1 — Collect Incoming Outputs:</b>
+                For every state <code>q ∈ Q</code>, examine all transitions entering <code>q</code> and collect the set of outputs <code>O(q)</code>:
+                <div class="formula-box">
+                  <span class="formula-title">Incoming Outputs Set</span>
+                  O(q) = { λ(p, a) ∣ p ∈ Q, a ∈ Σ, δ(p, a) = q }
+                </div>
+                <i>Edge Case:</i> If a state has no incoming transitions (like an isolated start state), <code>O(q)</code> is empty. We assign it any arbitrary symbol from <code>Δ</code> so it receives a valid Moore state output.
+              </li>
+              <li>
+                <b>Step 2 — Create Split Moore States:</b>
+                For each state <code>q</code> and each output <code>o ∈ O(q)</code>, create a new Moore state pair <code>⟨q, o⟩</code> (displayed as <code>q_o</code> in the UI).
+                <div class="formula-box">
+                  <span class="formula-title">New States &amp; Outputs</span>
+                  Q' = { ⟨q, o⟩ ∣ q ∈ Q, o ∈ O(q) }<br>
+                  λ'(⟨q, o⟩) = o
+                </div>
+              </li>
+              <li>
+                <b>Step 3 — Wire the Transitions:</b>
+                Every clone <code>⟨q, o⟩</code> behaves on future inputs just like the original state <code>q</code>.
+                When it reads input <code>a</code>, it transitions to the copy of <code>δ(q, a)</code> whose designated output matches <code>λ(q, a)</code>:
+                <div class="formula-box">
+                  <span class="formula-title">Moore Transition Function</span>
+                  δ'(⟨q, o⟩, a) = ⟨δ(q, a), λ(q, a)⟩
+                </div>
+              </li>
+              <li>
+                <b>Step 4 — Designate the Start State:</b>
+                The new start state is simply the copy of the original start state <code>⟨q₀, o⟩</code>.
+              </li>
+            </ol>
+
+            <div class="formula-box">
+              <span class="formula-title">Worst-Case State Bound</span>
+              |Q'| ≤ |Q| × |Δ|
+            </div>
+            <p>
+              For a binary alphabet where <code>|Δ| = 2</code>, a 4-state Mealy machine will produce at most <code>4 × 2 = 8</code> Moore states.
+              In our classic 4-state example, only two states receive conflicting outputs, resulting in exactly <b>6 Moore states</b>.
+            </p>
+
+            <!-- White Doodle Art #2: State Splitting Doodle -->
+            <div class="doodle-card">
+              <svg class="white-doodle-svg" viewBox="0 0 680 180" width="680" height="180" fill="none" stroke="#fffcf2" stroke-width="2.2">
+                <!-- Original Mealy State q2 with conflicting inputs -->
+                <g transform="translate(40, 20)">
+                  <text x="80" y="16" font-family="'Ubuntu', sans-serif" font-size="13" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">MEALY STATE q2</text>
+                  <circle cx="80" cy="80" r="30" stroke="#fffcf2"/>
+                  <text x="80" y="86" font-family="'Ubuntu Mono', monospace" font-size="16" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q2</text>
+                  <!-- Incoming 1 -->
+                  <path d="M 0 50 C 30 50, 40 60, 52 70" stroke-linecap="round"/>
+                  <path d="M 43 62 L 53 71 L 43 75"/>
+                  <text x="18" y="44" font-family="'Ubuntu Mono', monospace" font-size="13" font-weight="700" fill="#fffcf2" stroke="none">in: 0 / out: 0</text>
+                  <!-- Incoming 2 -->
+                  <path d="M 0 110 C 30 110, 40 100, 52 90" stroke-linecap="round"/>
+                  <path d="M 43 85 L 53 89 L 43 98"/>
+                  <text x="18" y="126" font-family="'Ubuntu Mono', monospace" font-size="13" font-weight="700" fill="#eb5e28" stroke="none">in: 1 / out: 1</text>
+                </g>
+
+                <!-- Center split arrow with scribble cloud -->
+                <g transform="translate(260, 60)">
+                  <path d="M 10 40 C 40 25, 70 55, 100 40" stroke="#eb5e28" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M 90 32 L 102 40 L 92 48" stroke="#eb5e28" stroke-width="2.5" stroke-linecap="round"/>
+                  <text x="55" y="24" font-family="'Ubuntu', sans-serif" font-size="12" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">SPLIT!</text>
+                  <path d="M 45 48 C 50 56, 62 56, 68 48" stroke="#ccc5b9" stroke-width="1.4"/>
+                </g>
+
+                <!-- Right side: Two Moore States -->
+                <g transform="translate(420, 10)">
+                  <text x="120" y="16" font-family="'Ubuntu', sans-serif" font-size="13" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">TWO MOORE STATES</text>
+                  <!-- State q2_0 -->
+                  <circle cx="120" cy="55" r="28" stroke="#fffcf2"/>
+                  <line x1="94" y1="55" x2="146" y2="55" stroke="#ccc5b9" stroke-width="1.5"/>
+                  <text x="120" y="48" font-family="'Ubuntu Mono', monospace" font-size="13" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q2_0</text>
+                  <text x="120" y="70" font-family="'Ubuntu Mono', monospace" font-size="12" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">λ = 0</text>
+                  <!-- State q2_1 -->
+                  <circle cx="120" cy="125" r="28" stroke="#fffcf2"/>
+                  <line x1="94" y1="125" x2="146" y2="125" stroke="#ccc5b9" stroke-width="1.5"/>
+                  <text x="120" y="118" font-family="'Ubuntu Mono', monospace" font-size="13" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q2_1</text>
+                  <text x="120" y="140" font-family="'Ubuntu Mono', monospace" font-size="12" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">λ = 1</text>
+                  <!-- Curly brace grouping -->
+                  <path d="M 50 55 C 65 55, 65 90, 75 90 C 65 90, 65 125, 50 125" stroke="#ccc5b9" stroke-width="1.6" stroke-linecap="round"/>
+                </g>
+              </svg>
+              <div class="doodle-caption">Fig 2. State Splitting Doodle: When multiple incoming transitions have different outputs, the state duplicates into specialized output copies.</div>
+            </div>
+          </div>
+
+          <!-- Subsection: Moore to Mealy -->
+          <div id="heading-2-moore-mealy" style="margin-top: 36px;">
+            <h3>2.2 Moore → Mealy Conversion (The Output-Shifting Method)</h3>
+            <p>
+              Converting from Moore to Mealy is much simpler because <b>no state splitting is ever needed</b>.
+              Every Moore state already has an unambiguous, pre-assigned output.
+            </p>
+            <p>
+              When a transition is taken from state <code>q</code> to state <code>p</code>, the machine enters <code>p</code>.
+              Since Moore output is emitted whenever a state is entered, we simply move the output of destination state <code>p</code>
+              directly onto the transition arrow!
+            </p>
+
+            <div class="formula-box">
+              <span class="formula-title">Moore to Mealy Shift Formula</span>
+              Q' = Q, &emsp; q₀' = q₀, &emsp; δ'(q, a) = δ(q, a)<br>
+              λ'(q, a) = λ(δ(q, a))
+            </div>
+
+            <p>
+              <i>Explanation:</i> The output for transition <code>(q, a)</code> becomes the output of the state you land on (<code>λ(target)</code>).
+              The state count remains exactly the same: <code>|Q'| = |Q|</code>.
+            </p>
+
+            <!-- White Doodle Art #3: Output Shifting Doodle -->
+            <div class="doodle-card">
+              <svg class="white-doodle-svg" viewBox="0 0 680 140" width="680" height="140" fill="none" stroke="#fffcf2" stroke-width="2.2">
+                <g transform="translate(60, 20)">
+                  <!-- From State qA -->
+                  <circle cx="50" cy="50" r="28" stroke="#fffcf2"/>
+                  <text x="50" y="55" font-family="'Ubuntu Mono', monospace" font-size="14" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">qA</text>
+
+                  <!-- Transition arrow -->
+                  <path d="M 82 50 L 260 50" stroke-linecap="round"/>
+                  <path d="M 250 43 L 262 50 L 250 57" stroke-linecap="round"/>
+                  <text x="170" y="40" font-family="'Ubuntu Mono', monospace" font-size="14" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">input a</text>
+
+                  <!-- Destination State qB with output inside -->
+                  <circle cx="295" cy="50" r="28" stroke="#fffcf2"/>
+                  <line x1="270" y1="50" x2="320" y2="50" stroke="#ccc5b9" stroke-width="1.5"/>
+                  <text x="295" y="42" font-family="'Ubuntu Mono', monospace" font-size="12" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">qB</text>
+                  <text x="295" y="65" font-family="'Ubuntu Mono', monospace" font-size="12" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">λ = 1</text>
+
+                  <!-- Shift curved animation doodle arrow -->
+                  <path d="M 290 85 C 270 110, 200 110, 180 62" stroke="#eb5e28" stroke-width="2.2" stroke-dasharray="4 3" stroke-linecap="round"/>
+                  <path d="M 188 64 L 178 60 L 178 72" stroke="#eb5e28" stroke-width="2"/>
+                  <text x="240" y="112" font-family="'Ubuntu', sans-serif" font-size="12" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">Shift output onto arrow: a / 1</text>
+                </g>
+              </svg>
+              <div class="doodle-caption">Fig 3. Output Shifting Doodle: The destination state's output shifts backwards onto the incoming transition.</div>
+            </div>
+          </div>
+
+          <!-- Subsection: Minimization -->
+          <div id="heading-2-min" style="margin-top: 36px;">
+            <h3>2.3 State Minimization (Removing Unreachable &amp; Merging Equivalent States)</h3>
+            <p>
+              State splitting can create extra states that are never visited from the start state, or states that act as exact twins.
+              When <b>"Minimize result"</b> is checked, the simulator executes a rigorous two-phase minimization:
+            </p>
+
+            <ol>
+              <li>
+                <b>Phase 1 — Reachability Analysis (BFS):</b>
+                Starting at initial state <code>q₀</code>, we traverse all transitions using Breadth-First Search.
+                Any state not reachable from <code>q₀</code> is permanently pruned from the machine.
+              </li>
+              <li>
+                <b>Phase 2 — Partition Refinement (Hopcroft / Moore Reduction):</b>
+                Two states <code>p</code> and <code>q</code> are <b>equivalent (p ≡ q)</b> if they produce identical outputs
+                for <i>every possible input string</i> from that point onward.
+                <ul>
+                  <li><i>Base Partition (P₀):</i> Group states by their immediate output behavior. For Moore machines, states with the same <code>λ(q)</code> share a block. For Mealy machines, states with identical output vectors <code>λ(q, ·)</code> share a block.</li>
+                  <li><i>Refinement Step:</i> For every block of states <code>B</code> and every input symbol <code>a ∈ Σ</code>, check where the transitions lead. If state <code>p ∈ B</code> transitions to block <code>X</code> while state <code>q ∈ B</code> transitions to block <code>Y</code> (where <code>X ≠ Y</code>), then <code>p</code> and <code>q</code> are distinguishable! Block <code>B</code> is split.</li>
+                  <li><i>Stabilization:</i> We repeat this check until no block can be split any further. Each final block represents a single unified state in the minimal machine.</li>
+                </ul>
+              </li>
+            </ol>
+          </div>
+        </article>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- SECTION 3: SIMULATE & VALIDATE                                 -->
+      <!-- ============================================================== -->
+      <section class="docs-section" id="heading-3">
+        <article class="docs-card">
+          <div class="docs-card-header">
+            <h2><span class="num">3</span> Simulate &amp; Validate — The "Length Off-by-One" Law</h2>
+            <span class="tag">Section 3 Overview</span>
+          </div>
+
+          <p>
+            Section 3 allows you to test any string <code>w</code> on both machines simultaneously and inspect the step-by-step
+            internal state transitions, output symbols, and equivalence verdicts.
+          </p>
+
+          <h3>The "Off-by-One" Length Difference</h3>
+          <p>
+            A common source of confusion in automata theory is why the output lengths of Mealy and Moore machines differ for the
+            exact same input string:
+          </p>
+
+          <div class="comparison-grid">
+            <div class="comparison-col">
+              <h4>Mealy Output Length</h4>
+              <div class="formula-box">|output| = |w|</div>
+              <p>
+                An output is emitted <b>only when taking a transition</b>.
+                For an input of length 4 (e.g. <code>0011</code>), exactly 4 transitions are taken, producing an output of length <b>4</b> (e.g. <code>0100</code>).
+              </p>
+            </div>
+            <div class="comparison-col">
+              <h4>Moore Output Length</h4>
+              <div class="formula-box">|output| = |w| + 1</div>
+              <p>
+                A Moore machine emits the output of its initial state <code>λ(q₀)</code> <b>at time 0, before reading any input</b>!
+                After taking 4 transitions, it has visited 5 states, producing an output of length <b>5</b> (e.g. <code>1 0100</code>).
+              </p>
+            </div>
+          </div>
+
+          <h3>The Equivalence Theorem</h3>
+          <div class="formula-box">
+            <span class="formula-title">Equivalence Formula</span>
+            Moore(w) = λ(q₀) · Mealy(w)
+          </div>
+          <p>
+            A Mealy machine <code>M₁</code> and Moore machine <code>M₂</code> are equivalent if and only if for every input string <code>w</code>,
+            the Moore output is equal to the initial state's output <code>λ(q₀)</code> concatenated with the Mealy output.
+          </p>
+          <div class="callout-box">
+            <p><b>Verification Rule:</b> In the simulator, Moore output is compared against Mealy output by <b>dropping the leading λ(q₀) symbol</b>. If the remaining substrings match for all inputs, the conversion is 100% equivalent!</p>
+          </div>
+
+          <!-- White Doodle Art #4: Ticker Tape & Scissors Doodle -->
+          <div class="doodle-card">
+            <svg class="white-doodle-svg" viewBox="0 0 680 160" width="680" height="160" fill="none" stroke="#fffcf2" stroke-width="2.2">
+              <!-- Input string w -->
+              <g transform="translate(40, 20)">
+                <text x="60" y="16" font-family="'Ubuntu', sans-serif" font-size="13" font-weight="700" fill="#ccc5b9" stroke="none" text-anchor="middle">INPUT STRING (w = 0011)</text>
+                <rect x="0" y="30" width="120" height="34" rx="6" stroke="#fffcf2" stroke-dasharray="3 3"/>
+                <text x="60" y="52" font-family="'Ubuntu Mono', monospace" font-size="16" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">0 0 1 1</text>
+              </g>
+
+              <!-- Mealy Output Tape -->
+              <g transform="translate(240, 10)">
+                <text x="100" y="14" font-family="'Ubuntu', sans-serif" font-size="12" font-weight="700" fill="#eb5e28" stroke="none">MEALY: |w| = 4</text>
+                <rect x="0" y="24" width="170" height="34" rx="6" stroke="#fffcf2"/>
+                <text x="85" y="46" font-family="'Ubuntu Mono', monospace" font-size="16" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">0 1 0 0</text>
+              </g>
+
+              <!-- Moore Output Tape with Scissors -->
+              <g transform="translate(240, 75)">
+                <text x="100" y="14" font-family="'Ubuntu', sans-serif" font-size="12" font-weight="700" fill="#eb5e28" stroke="none">MOORE: |w| + 1 = 5</text>
+                <rect x="0" y="24" width="210" height="34" rx="6" stroke="#fffcf2"/>
+                <!-- First symbol in dashed box -->
+                <rect x="6" y="28" width="30" height="26" rx="4" stroke="#eb5e28" stroke-dasharray="2 2" stroke-width="1.8"/>
+                <text x="21" y="46" font-family="'Ubuntu Mono', monospace" font-size="16" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">1</text>
+                <!-- Remainder -->
+                <text x="118" y="46" font-family="'Ubuntu Mono', monospace" font-size="16" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">0 1 0 0</text>
+                <!-- Doodled Scissors cutting first symbol -->
+                <g transform="translate(38, 12)">
+                  <circle cx="0" cy="0" r="5" stroke="#fffcf2" stroke-width="1.6"/>
+                  <circle cx="10" cy="0" r="5" stroke="#fffcf2" stroke-width="1.6"/>
+                  <line x1="2" y1="4" x2="16" y2="18" stroke="#fffcf2" stroke-width="2"/>
+                  <line x1="8" y1="4" x2="-2" y2="18" stroke="#fffcf2" stroke-width="2"/>
+                </g>
+                <text x="120" y="74" font-family="'Ubuntu', sans-serif" font-size="12" fill="#ccc5b9" stroke="none">Cut initial λ(q₀) → Perfectly Equivalent!</text>
+              </g>
+
+              <!-- Checkmark Doodle -->
+              <g transform="translate(560, 45)">
+                <circle cx="35" cy="35" r="28" stroke="#52b788" stroke-width="2.5"/>
+                <path d="M 22 35 L 32 45 L 48 25" stroke="#52b788" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="35" y="80" font-family="'Ubuntu', sans-serif" font-size="12" font-weight="700" fill="#52b788" stroke="none" text-anchor="middle">100% MATCH</text>
+              </g>
+            </svg>
+            <div class="doodle-caption">Fig 4. The Equivalence Rule: Moore outputs emit an extra symbol at t=0. Once trimmed, outputs match identically.</div>
+          </div>
+
+          <h3>Exhaustive Equivalence Verification</h3>
+          <p>
+            Manual testing only checks individual strings. The <b>Exhaustive Equivalence Checker</b> systematically generates
+            every possible combination in the input language up to length <code>L</code>:
+          </p>
+          <div class="formula-box">
+            <span class="formula-title">Exhaustive String Set</span>
+            Strings Tested = ∑ (from k=0 to L) |Σ|ᵏ
+          </div>
+          <p>
+            For a binary alphabet <code>Σ = {0, 1}</code> up to length <code>L = 8</code>, the engine synthesizes and validates all
+            <code>1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 = 511</code> strings in a single pass in under 5 milliseconds, proving
+            formal equivalence beyond any doubt.
+          </p>
+        </article>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- SECTION 4: VISUAL LAYOUT & ANIMATION ENGINE                    -->
+      <!-- ============================================================== -->
+      <section class="docs-section" id="engine">
+        <article class="docs-card">
+          <div class="docs-card-header">
+            <h2><span class="num">4</span> Under the Hood — Graph Layout &amp; Animation Engine</h2>
+            <span class="tag">Rendering Architecture</span>
+          </div>
+
+          <p>
+            The diagrams in this simulator are rendered via dynamic inline SVG with custom layout geometry, physics dragging, and smooth
+            path interpolation:
+          </p>
+
+          <h3>1. Circular Trigonometric Coordinate Layout</h3>
+          <p>
+            Given a machine with <code>N</code> states, states are automatically distributed uniformly around an ellipse or circle centered at <code>(x_c, y_c)</code> with radius <code>R</code>:
+          </p>
+          <div class="formula-box">
+            <span class="formula-title">Node Coordinate Formula</span>
+            θ_i = (2π · i / N) - π/2<br>
+            x_i = x_c + R · cos(θ_i), &emsp; y_i = y_c + R · sin(θ_i)
+          </div>
+          <p>
+            Offsetting by <code>-π/2</code> positions the first state directly at 12 o'clock (the top), preserving visual hierarchy.
+          </p>
+
+          <h3>2. Quadratic Bézier Curve Offsetting</h3>
+          <p>
+            When transitions exist in both directions between state <code>A</code> and state <code>B</code> (i.e. <code>A → B</code> and <code>B → A</code>),
+            drawing straight lines would cause the arrows to overlap and obscure each other.
+          </p>
+          <p>
+            The engine calculates the unit normal vector <code>N = (-dy/len, dx/len)</code> perpendicular to the line connecting <code>A</code> and <code>B</code>,
+            and displaces the control point <code>C</code> by an offset proportional to the distance:
+          </p>
+          <div class="formula-box">
+            <span class="formula-title">Quadratic Bézier Curve Equation</span>
+            B(t) = (1 - t)² · A + 2(1 - t)t · C + t² · B &emsp; (for t ∈ [0, 1])
+          </div>
+
+          <h3>3. Smooth 2-Second Transition Line Animation</h3>
+          <p>
+            Instead of wiping and re-drawing the entire diagram on every step, the rendering engine preserves past states and edges in clean solid grey.
+            Only the active orange transition arrow animates:
+          </p>
+          <ul>
+            <li>Calculates the precise curve path length using <code>path.getTotalLength()</code>.</li>
+            <li>Initializes SVG <code>strokeDasharray = len</code> and <code>strokeDashoffset = len</code> (the line is completely retracted).</li>
+            <li>Executes a 2-second (<code>2000ms</code>) Web Animations API transition easing from <code>strokeDashoffset: len</code> to <code>0</code> using <code>cubic-bezier(0.35, 0.05, 0.25, 1)</code>.</li>
+            <li>The moment the line touches the target state circle, the arrowhead marker snaps into place, producing a natural, fluid pen-draw effect.</li>
+          </ul>
+
+          <!-- White Doodle Art #5: Layout Geometry Doodle -->
+          <div class="doodle-card">
+            <svg class="white-doodle-svg" viewBox="0 0 680 160" width="680" height="160" fill="none" stroke="#fffcf2" stroke-width="2.2">
+              <g transform="translate(140, 20)">
+                <!-- Center point -->
+                <circle cx="200" cy="65" r="3" fill="#fffcf2"/>
+                <text x="200" y="55" font-family="'Ubuntu Mono', monospace" font-size="12" fill="#ccc5b9" stroke="none" text-anchor="middle">(xc, yc)</text>
+
+                <!-- Dotted radius ring -->
+                <circle cx="200" cy="65" r="50" stroke="#ccc5b9" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+                <!-- Radius line with label R -->
+                <line x1="200" y1="65" x2="250" y2="65" stroke="#eb5e28" stroke-width="1.8"/>
+                <text x="225" y="60" font-family="'Ubuntu Mono', monospace" font-size="13" font-weight="700" fill="#eb5e28" stroke="none" text-anchor="middle">R</text>
+
+                <!-- Angles & Nodes -->
+                <circle cx="200" cy="15" r="14" stroke="#fffcf2"/>
+                <text x="200" y="19" font-family="'Ubuntu Mono', monospace" font-size="10" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q0</text>
+
+                <circle cx="250" cy="65" r="14" stroke="#fffcf2"/>
+                <text x="250" y="69" font-family="'Ubuntu Mono', monospace" font-size="10" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q1</text>
+
+                <circle cx="200" cy="115" r="14" stroke="#fffcf2"/>
+                <text x="200" y="119" font-family="'Ubuntu Mono', monospace" font-size="10" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q2</text>
+
+                <circle cx="150" cy="65" r="14" stroke="#fffcf2"/>
+                <text x="150" y="69" font-family="'Ubuntu Mono', monospace" font-size="10" font-weight="700" fill="#fffcf2" stroke="none" text-anchor="middle">q3</text>
+
+                <!-- Curved bezier offset arrow between q0 and q1 -->
+                <path d="M 210 24 Q 242 34 246 54" stroke="#eb5e28" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M 238 50 L 246 54 L 246 44" stroke="#eb5e28" stroke-width="2"/>
+                <text x="255" y="30" font-family="'Ubuntu', sans-serif" font-size="11" font-weight="700" fill="#eb5e28" stroke="none">Bézier Q(C)</text>
+              </g>
+            </svg>
+            <div class="doodle-caption">Fig 5. Geometry Engine: Circular trigonometric placement with normal-vector displaced Bézier curves.</div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="docs-nav-bar" style="margin-top: 40px; border-top: 1px solid var(--line); border-bottom: none; padding-top: 24px;">
+      <a href="index.html" class="btn-back">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to Simulator
+      </a>
+      <span style="font-size: 13.5px; color: var(--dust-grey);">Mealy ⇄ Moore Conversion Simulator · CSET302 Theory Documentation</span>
+    </footer>
+  </div>
+</body>
+</html>
